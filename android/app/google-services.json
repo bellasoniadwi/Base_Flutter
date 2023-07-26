@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "874679851467",
+    "project_id": "project-sinarindo",
+    "storage_bucket": "project-sinarindo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874679851467:android:fc41a931e456bdee2d3e4e",
+        "android_client_info": {
+          "package_name": "com.example.project_sinarindo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874679851467-gn4o8ltt2mf87nqvu3og471vf3l7mtg5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARFldiJIYTtPjB8caIseuMgTkt7SeqVcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874679851467-gn4o8ltt2mf87nqvu3og471vf3l7mtg5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
