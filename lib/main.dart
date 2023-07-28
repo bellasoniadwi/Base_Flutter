@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/addStudent.dart';
 import 'package:project_sinarindo/screens/editStudent.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,14 +49,27 @@ class _HomePageState extends State<HomePage> {
         title: Text("Sistem Absensi", style: TextStyle(color: Colors.white),),
         centerTitle: true,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddStudent()),
-          );
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        overlayOpacity: 0.1,
+        overlayColor: Colors.black,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.add),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddStudent()),
+              );
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.camera_alt),
+            onTap: () {
+              // Tambahkan aksi ketika tombol tambahan ditekan di sini
+            },
+          ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: StreamBuilder(
