@@ -39,23 +39,6 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-// Fungsi Pick Image dan Penyimpanan ke Firebase
-Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
-  ImagePicker imagePicker = ImagePicker();
-  XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
-
-  if (file == null) return;
-
-  // Mengubah gambar menjadi format yang lebih efisien untuk disimpan di Firebase Storage
-  Uint8List imageBytes = await file.readAsBytes();
-  String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-  Reference referenceImageToUpload = FirebaseStorage.instance.ref().child('images/$uniqueFileName.jpg');
-  await referenceImageToUpload.putData(imageBytes);
-
-  String imageUrl = await referenceImageToUpload.getDownloadURL();
-  setImageUrl(imageUrl);
-}
-
 class _HomePageState extends State<HomePage> {
   // Mendefinisikan variabel
   final CollectionReference _students = FirebaseFirestore.instance.collection('students');
@@ -65,6 +48,7 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _tanggalController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String imageUrl='';
+  String _imagePath = '';
 
   @override
   Widget build(BuildContext context) {
@@ -243,88 +227,92 @@ class _HomePageState extends State<HomePage> {
                 left: 20,
                 right: 20,
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
-                TextField(
-                  controller: _nimController,
-                  decoration: InputDecoration(labelText: 'NIM'),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly // Hanya menerima input angka
-                  ], 
-                  keyboardType: TextInputType.number, // Keyboard tipe angka
-                ),
-                TextField(
-                  controller: _angkatanController,
-                  decoration: InputDecoration(labelText: 'Angkatan'),// Hanya menerima input angka
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly
-                  ], 
-                  keyboardType: TextInputType.number, // Keyboard tipe angka
-                ),
-                TextField(
-                  controller: _tanggalController,
-                  decoration: InputDecoration(
-                    labelText: 'Tanggal Lahir',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.calendar_today),
-                      onPressed: () => _selectDate(context),
-                    ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: 'Name'),
                   ),
-                  keyboardType: TextInputType.datetime,
-                  readOnly: true, // Input hanya bisa melalui date picker
-                ),
-                IconButton(onPressed: () => _pickAndSetImage(_setImageUrl), icon: Icon(Icons.camera_alt), color: Colors.deepPurple,),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  child: Text('Add'),
-                  onPressed: () async {
-                    final String name = _nameController.text;
-                    final String nim = _nimController.text;
-                    final String angkatan = _angkatanController.text;
-                    final Timestamp tanggalTimestamp = Timestamp.fromDate(selectedDate);
-
-                    // Get current latitude and longitude
-                    _currentLocation = await _getCurrentLocation();
-                    final String latitude = _currentLocation!.latitude.toString();
-                    final String longitude = _currentLocation!.longitude.toString();
-
-                    if (imageUrl.isEmpty) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('Please Upload an Image')));
-                      return;
-                    }
-                    if (name != "") {
-                      await _students.add({
-                        "name": name,
-                        "nim": nim,
-                        "angkatan": angkatan,
-                        "tanggal": tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
-                        "timestamps": FieldValue.serverTimestamp(),
-                        "image": imageUrl,
-                        "latitude": latitude,
-                        "longitude": longitude,
-                      });
-                      _nameController.text = '';
-                      _nimController.text = '';
-                      _angkatanController.text = '';
-                      _tanggalController.text = '';
-                      imageUrl = '';
-                    }
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Data berhasil ditambahkan')));
-                    Navigator.pop(context);
-                  },
-                )
-              ],
+                  TextField(
+                    controller: _nimController,
+                    decoration: InputDecoration(labelText: 'NIM'),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly // Hanya menerima input angka
+                    ], 
+                    keyboardType: TextInputType.number, // Keyboard tipe angka
+                  ),
+                  TextField(
+                    controller: _angkatanController,
+                    decoration: InputDecoration(labelText: 'Angkatan'),// Hanya menerima input angka
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly
+                    ], 
+                    keyboardType: TextInputType.number, // Keyboard tipe angka
+                  ),
+                  TextField(
+                    controller: _tanggalController,
+                    decoration: InputDecoration(
+                      labelText: 'Tanggal Lahir',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () => _selectDate(context),
+                      ),
+                    ),
+                    keyboardType: TextInputType.datetime,
+                    readOnly: true, // Input hanya bisa melalui date picker
+                  ),
+                  IconButton(onPressed: () => _pickAndSetImage(_setImageUrl), icon: Icon(Icons.camera_alt), color: Colors.deepPurple,),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _imagePath != '' ? Image.file(File(_imagePath)) : Container(),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    child: Text('Add'),
+                    onPressed: () async {
+                      final String name = _nameController.text;
+                      final String nim = _nimController.text;
+                      final String angkatan = _angkatanController.text;
+                      final Timestamp tanggalTimestamp = Timestamp.fromDate(selectedDate);
+            
+                      // Get current latitude and longitude
+                      _currentLocation = await _getCurrentLocation();
+                      final String latitude = _currentLocation!.latitude.toString();
+                      final String longitude = _currentLocation!.longitude.toString();
+            
+                      if (imageUrl.isEmpty) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('Please Upload an Image')));
+                        return;
+                      }
+                      if (name != "") {
+                        await _students.add({
+                          "name": name,
+                          "nim": nim,
+                          "angkatan": angkatan,
+                          "tanggal": tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
+                          "timestamps": FieldValue.serverTimestamp(),
+                          "image": imageUrl,
+                          "latitude": latitude,
+                          "longitude": longitude,
+                        });
+                        _nameController.text = '';
+                        _nimController.text = '';
+                        _angkatanController.text = '';
+                        _tanggalController.text = '';
+                        imageUrl = '';
+                      }
+            
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Data berhasil ditambahkan')));
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
             ),
           );
         }
@@ -337,7 +325,6 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('You have successfully deleted a student')));
   }
-
 
   // Komponen Pengambilan Lokasi Saat Ini
   Position? _currentLocation;
@@ -394,4 +381,26 @@ class _HomePageState extends State<HomePage> {
       this.imageUrl = imageUrl;
     });
   }
+
+  // Fungsi Pick Image dan Penyimpanan ke Firebase
+Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
+  ImagePicker imagePicker = ImagePicker();
+  XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
+
+  if (file == null) return;
+
+  // Store the local file path in _imagePath variable
+  setState(() {
+    _imagePath = file.path;
+  });
+
+  // Mengubah gambar menjadi format yang lebih efisien untuk disimpan di Firebase Storage
+  Uint8List imageBytes = await file.readAsBytes();
+  String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+  Reference referenceImageToUpload = FirebaseStorage.instance.ref().child('images/$uniqueFileName.jpg');
+  await referenceImageToUpload.putData(imageBytes);
+
+  String imageUrl = await referenceImageToUpload.getDownloadURL();
+  setImageUrl(imageUrl);
+}
 }
