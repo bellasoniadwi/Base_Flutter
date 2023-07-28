@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class EditStudent extends StatefulWidget {
   final DocumentSnapshot? documentSnapshot;
@@ -96,7 +95,8 @@ class _EditStudentState extends State<EditStudent> {
                   await _students.doc(widget.documentSnapshot!.id).update({
                     "name": name,
                     "nim": nim,
-                    "angkatan": angkatan
+                    "angkatan": angkatan,
+                    "timestamps": FieldValue.serverTimestamp(),
                   });
                   _nameController.text = '';
                   _nimController.text = '';
