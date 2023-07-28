@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -195,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                     } catch (e) {
                       print('Error parsing date: $e'); //menangani kesalahan jika parsing gagal
                     }
-                    if (angkatan != "") {
+                    if (name != "") {
                       await _students.doc(documentSnapshot!.id).update({
                         "name": name,
                         "nim": nim,
@@ -207,6 +209,8 @@ class _HomePageState extends State<HomePage> {
                       _angkatanController.text = '';
                       _tanggalController.text = '';
                     }
+
+                    
                   },
                 )
               ],
@@ -286,19 +290,27 @@ class _HomePageState extends State<HomePage> {
                     final String nim = _nimController.text;
                     final String angkatan = _angkatanController.text;
                     final Timestamp tanggalTimestamp = Timestamp.fromDate(selectedDate);
+
+                    // Get current latitude and longitude
+                    _currentLocation = await _getCurrentLocation();
+                    final String latitude = _currentLocation!.latitude.toString();
+                    final String longitude = _currentLocation!.longitude.toString();
+
                     if (imageUrl.isEmpty) {
                       ScaffoldMessenger.of(context)
                           .showSnackBar(SnackBar(content: Text('Please Upload an Image')));
                       return;
                     }
-                    if (angkatan != "") {
+                    if (name != "") {
                       await _students.add({
                         "name": name,
                         "nim": nim,
                         "angkatan": angkatan,
                         "tanggal": tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
                         "timestamps": FieldValue.serverTimestamp(),
-                        "image": imageUrl
+                        "image": imageUrl,
+                        "latitude": latitude,
+                        "longitude": longitude,
                       });
                       _nameController.text = '';
                       _nimController.text = '';
@@ -306,6 +318,10 @@ class _HomePageState extends State<HomePage> {
                       _tanggalController.text = '';
                       imageUrl = '';
                     }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Data berhasil ditambahkan')));
+                    Navigator.pop(context);
                   },
                 )
               ],
@@ -323,6 +339,23 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+  // Komponen Pengambilan Lokasi Saat Ini
+  Position? _currentLocation;
+  late bool servicePermission = false;
+  late LocationPermission permission;
+  Future<Position> _getCurrentLocation() async {
+    // check if we have permission to access location service
+    servicePermission = await Geolocator.isLocationServiceEnabled();
+    if (!servicePermission) {
+      print("Service Disabled");
+    }
+    // service enabled
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    return await Geolocator.getCurrentPosition();
+  }
 
   // Fungsi Pembantu Date
   Future<void> _selectDate(BuildContext context) async {
@@ -332,11 +365,9 @@ class _HomePageState extends State<HomePage> {
         initialDate: selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-
         // Format tanggal yang dipilih ke dalam string sesuai dengan format yang diinginkan
         _tanggalController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
       });
