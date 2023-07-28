@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/addStudent.dart';
+import 'package:project_sinarindo/screens/editStudent.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +43,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        title: Text("Sistem Absensi", style: TextStyle(color: Colors.white),),
+        centerTitle: true,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -77,10 +83,15 @@ class _HomePageState extends State<HomePage> {
                     trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // IconButton(
-                      //   icon: Icon(Icons.edit),
-                      //   onPressed: () => _update(documentSnapshot),
-                      // ),
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditStudent(documentSnapshot: documentSnapshot),
+                          ),
+                        ),
+                      ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () => _deleteStudent(documentSnapshot.id),
