@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/addStudent.dart';
+import 'package:project_sinarindo/screens/detailStudent.dart';
 import 'package:project_sinarindo/screens/editStudent.dart';
 import 'package:project_sinarindo/screens/scanStudent.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -94,6 +95,13 @@ class _HomePageState extends State<HomePage> {
                 return Card(
                   margin: const EdgeInsets.all(10),
                   child: ListTile(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => DetailStudent(
+                        documentSnapshot: documentSnapshot),
+                      ),
+                    ),
                     leading: ClipOval(
                       child: Image.network(
                         documentSnapshot['image'],
