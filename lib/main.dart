@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/addStudent.dart';
 import 'package:project_sinarindo/screens/editStudent.dart';
+import 'package:project_sinarindo/screens/scanStudent.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() async {
@@ -23,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
@@ -37,16 +40,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // Mendefinisikan variabel
-  final CollectionReference _students = FirebaseFirestore.instance.collection('students');
+  final CollectionReference _students =
+      FirebaseFirestore.instance.collection('students');
   DateTime selectedDate = DateTime.now();
-  String imageUrl='';
+  String imageUrl = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: Text("Sistem Absensi", style: TextStyle(color: Colors.white),),
+        title: const Text(
+          "Sistem Absensi",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       floatingActionButton: SpeedDial(
@@ -55,18 +62,21 @@ class _HomePageState extends State<HomePage> {
         overlayColor: Colors.black,
         children: [
           SpeedDialChild(
-            child: Icon(Icons.add),
+            child: const Icon(Icons.add),
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddStudent()),
+                MaterialPageRoute(builder: (context) => const AddStudent()),
               );
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.camera_alt),
+            child: const Icon(Icons.qr_code_scanner),
             onTap: () {
-              // Tambahkan aksi ketika tombol tambahan ditekan di sini
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ScanStudent()),
+              );
             },
           ),
         ],
@@ -87,31 +97,35 @@ class _HomePageState extends State<HomePage> {
                     leading: ClipOval(
                       child: Image.network(
                         documentSnapshot['image'],
-                        width: 50, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
-                        height: 50, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
+                        width:
+                            50, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
+                        height:
+                            50, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
                         fit: BoxFit.cover,
                       ),
                     ),
                     title: Text(documentSnapshot['name']),
-                    subtitle: Text(_getFormattedTimestamp(documentSnapshot['timestamps'])),
+                    subtitle: Text(
+                        _getFormattedTimestamp(documentSnapshot['timestamps'])),
                     trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditStudent(documentSnapshot: documentSnapshot),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditStudent(
+                                  documentSnapshot: documentSnapshot),
+                            ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () => _deleteStudent(documentSnapshot.id),
-                      ),
-                    ],
-                  ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => _deleteStudent(documentSnapshot.id),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -141,8 +155,37 @@ class _HomePageState extends State<HomePage> {
   Future<void> _deleteStudent(String productId) async {
     await _students.doc(productId).delete();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You have successfully deleted a student')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('You have successfully deleted a student')));
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> scanQR() async {
+    //code = _scanBarcode
+    String _scanBarcode = 'Unknown';
+    //getcode=barcodeScanRes
+    String barcodeScanRes = "";
+
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.QR);
+      // print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = barcodeScanRes;
+    });
+  }
 }
