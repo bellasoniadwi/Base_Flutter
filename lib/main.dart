@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/addStudent.dart';
+import 'package:project_sinarindo/screens/detailScan.dart';
 import 'package:project_sinarindo/screens/detailStudent.dart';
 import 'package:project_sinarindo/screens/editStudent.dart';
-import 'package:project_sinarindo/screens/scanStudent.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() async {
@@ -73,12 +73,7 @@ class _HomePageState extends State<HomePage> {
           ),
           SpeedDialChild(
             child: const Icon(Icons.qr_code_scanner),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ScanStudent()),
-              );
-            },
+            onTap: () => scanQR(),
           ),
         ],
       ),
@@ -173,27 +168,24 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> scanQR() async {
-    //code = _scanBarcode
-    String _scanBarcode = 'Unknown';
-    //getcode=barcodeScanRes
-    String barcodeScanRes = "";
-
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      // print(barcodeScanRes);
+      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR,
+      );
+
+      // Redirect to the detail page with the scanned document ID
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailScan(
+            scannedNIM: barcodeScanRes,
+          ),
+        ),
+      );
     } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
+      setState(() {
+        // Handle the error
+      });
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
   }
 }
