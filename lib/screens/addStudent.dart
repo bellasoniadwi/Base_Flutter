@@ -84,6 +84,17 @@ class _AddStudent extends State<AddStudent> {
     return await Geolocator.getCurrentPosition();
   }
 
+  //Membuat pilihan dropdown kehadiran
+  // Initial Selected Value
+  String dropdownvalue = 'Masukkan Keterangan';
+  // List of items in our dropdown menu
+  var items = [
+    'Masukkan Keterangan',
+    'Masuk',
+    'Izin',
+    'Sakit',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,13 +159,37 @@ class _AddStudent extends State<AddStudent> {
               const SizedBox(
                 height: 20.0,
               ),
+              DropdownButton<String?>(
+                // Initial Value
+                value: dropdownvalue,
+
+                // Down Arrow Icon
+                icon: const Icon(Icons.keyboard_arrow_down),
+
+                // Array list of items
+                items: items.map<DropdownMenuItem<String?>>((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(), // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (value) {
+                  setState(() {
+                    dropdownvalue = value!;
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   primary: Colors.deepPurple,
                   minimumSize: const Size.fromHeight(50),
                 ),
                 onPressed: () => _pickAndSetImage(_setImageUrl),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.camera_alt,
@@ -188,6 +223,7 @@ class _AddStudent extends State<AddStudent> {
                   final String angkatan = _angkatanController.text;
                   final Timestamp tanggalTimestamp =
                       Timestamp.fromDate(selectedDate);
+                  final String keterangan = dropdownvalue;
 
                   // Get current latitude and longitude
                   _currentLocation = await _getCurrentLocation();
@@ -205,16 +241,19 @@ class _AddStudent extends State<AddStudent> {
                       "name": name,
                       "nim": nim,
                       "angkatan": angkatan,
-                      "tanggal": tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
+                      "tanggal":
+                          tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
                       "timestamps": FieldValue.serverTimestamp(),
                       "image": imageUrl,
                       "latitude": latitude,
                       "longitude": longitude,
+                      "keterangan": keterangan,
                     });
                     _nameController.text = '';
                     _nimController.text = '';
                     _angkatanController.text = '';
                     _tanggalController.text = '';
+                    dropdownvalue = '';
                     imageUrl = '';
                   }
 
