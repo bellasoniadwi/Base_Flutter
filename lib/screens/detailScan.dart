@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:project_sinarindo/main.dart';
+import 'package:project_sinarindo/screens/homeScreen.dart';
 
 class DetailScan extends StatefulWidget {
   final String? scannedNIM;
@@ -270,7 +270,7 @@ class _DetailScanState extends State<DetailScan> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => HomeScreen()),
           ).then((data) {});
         },
         child: const Icon(

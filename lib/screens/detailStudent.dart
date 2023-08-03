@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:project_sinarindo/main.dart';
+import 'package:project_sinarindo/screens/homeScreen.dart';
 
 class DetailStudent extends StatefulWidget {
   final DocumentSnapshot? documentSnapshot;
@@ -224,7 +224,7 @@ class _DetailStudentState extends State<DetailStudent> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => HomePage()))
+                  MaterialPageRoute(builder: (context) => HomeScreen()))
               .then((data) {});
         },
         child: const Icon(Icons.arrow_back, color: Colors.white,),
