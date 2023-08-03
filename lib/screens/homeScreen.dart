@@ -26,6 +26,30 @@ class _HomeScreenState extends State<HomeScreen> {
       FirebaseFirestore.instance.collection('students');
   DateTime selectedDate = DateTime.now();
   String imageUrl = '';
+  String? _userName;
+
+  void initState() {
+    super.initState();
+    fetchUserDataFromFirestore();
+  }
+
+  Future<void> fetchUserDataFromFirestore() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Ambil data pengguna dari Firestore berdasarkan UID
+        var userDoc =
+            await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          setState(() {
+            _userName = userDoc.data()?['name'] ?? 'Guest';
+          });
+        }
+      }
+    } catch (error) {
+      print("Error fetching user data: $error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: StreamBuilder(
-        stream: _students.snapshots(), //build connection
+        stream: _students
+            .where('name', isEqualTo: _userName) // Filter documents by 'name'
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
           if (streamSnapshot.hasData) {
             return ListView.builder(
@@ -137,11 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('You have successfully deleted a student')));
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   Future<void> scanQR() async {
