@@ -19,7 +19,7 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController _passwordTextController = TextEditingController();
   TextEditingController _emailTextController = TextEditingController();
   bool _isPasswordVisible = false;
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,77 +28,88 @@ class _SignInScreenState extends State<SignInScreen> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-            hexStringToColor("D3D3D3"),
-            hexStringToColor("696969"),
-            hexStringToColor("000000")
+          hexStringToColor("D3D3D3"),
+          hexStringToColor("696969"),
+          hexStringToColor("000000")
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
+            child: Padding(
+          padding: EdgeInsets.fromLTRB(
               20, MediaQuery.of(context).size.height * 0.2, 20, 0),
-            child: Column(
-              children: <Widget>[
-                logoWidget("assets/images/logo1.png"),
-                SizedBox(
-                  height: 30,
-                ),
-                reusableTextField(
-                  "Enter Email",
-                  Icons.mail,
-                  controller: _emailTextController,
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                reusableTextField(
-                  "Enter Password",
-                  Icons.lock_outlined,
-                  isPasswordType: true,
-                  isPasswordVisible: _isPasswordVisible,
-                  controller: _passwordTextController,
-                  onTogglePasswordVisibility: (isVisible) {
-                    setState(() {
-                      _isPasswordVisible = isVisible;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                SignInSignUpButton(context, true, () {
-                  FirebaseAuth.instance
-                  .signInWithEmailAndPassword(
-                    email: _emailTextController.text, 
-                    password: _passwordTextController.text)
-                    .then((value) async {
-                      var userDoc = await FirebaseFirestore.instance.collection('users').doc(value.user?.uid).get();
-                        if (userDoc.exists) {
-                          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
-                          
-                          Provider.of<UserData>(context, listen: false).updateUserData(
-                            value.user?.displayName ?? "Guest", 
-                            value.user?.email ?? "guest@example.com", 
-                            pelatih
-                          );
-                        }
-
-                        // Set status login sebagai true saat pengguna berhasil login
-                        final SharedPreferences prefs = await SharedPreferences.getInstance();
-                        prefs.setBool('isLoggedIn', true);
-              
-                      Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
-                    }).onError((error, stackTrace) {
-                      print("Error ${error.toString()}");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${error.toString()}')));
-                    });
-                }),
-                // signUpOption()
-              ]
+          child: Column(children: <Widget>[
+            logoWidget("assets/images/logo1.png"),
+            SizedBox(
+              height: 30,
             ),
-          )
-        ),
+            reusableTextField(
+              "Enter Email",
+              Icons.mail,
+              controller: _emailTextController,
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            reusableTextField(
+              "Enter Password",
+              Icons.lock_outlined,
+              isPasswordType: true,
+              isPasswordVisible: _isPasswordVisible,
+              controller: _passwordTextController,
+              onTogglePasswordVisibility: (isVisible) {
+                setState(() {
+                  _isPasswordVisible = isVisible;
+                });
+              },
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            SignInSignUpButton(context, true, () async {
+              try {
+                final UserCredential userCredential =
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: _emailTextController.text,
+                        password: _passwordTextController.text);
+
+                final String uid = userCredential.user?.uid ?? '';
+
+                var userDoc = await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(uid)
+                    .get();
+                if (userDoc.exists) {
+                  String role = userDoc.data()?['role'] ?? '';
+                  if (role == 'Peserta') {
+                    String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
+
+                    Provider.of<UserData>(context, listen: false)
+                        .updateUserData(
+                            userCredential.user?.displayName ?? "Guest",
+                            userCredential.user?.email ?? "guest@example.com",
+                            pelatih);
+
+                    // Set status login sebagai true saat pengguna berhasil login
+                    final SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    prefs.setBool('isLoggedIn', true);
+
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'You are not allowed to log in. Please contact the admin.')));
+                  }
+                }
+              } catch (error) {
+                print("Error ${error.toString()}");
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${error.toString()}')));
+              }
+            }),
+            // signUpOption()
+          ]),
+        )),
       ),
     );
   }
