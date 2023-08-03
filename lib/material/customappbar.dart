@@ -29,7 +29,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
         if (userDoc.exists) {
           String name = userDoc.data()?['name'] ?? 'Guest';
           String email = userDoc.data()?['email'] ?? 'guest@example.com';
-          Provider.of<UserData>(context, listen: false).updateUserData(name, email);
+          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
+          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih);
         }
       }
     } catch (error) {

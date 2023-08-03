@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class UserData extends ChangeNotifier {
   String? name;
   String? email;
+  String? pelatih;
 
   // Metode untuk memuat data pengguna dari Firestore berdasarkan UID
   Future<void> fetchUserData(String uid) async {
@@ -12,6 +13,7 @@ class UserData extends ChangeNotifier {
       if (userDoc.exists) {
         name = userDoc.data()?['name'];
         email = userDoc.data()?['email'];
+        pelatih = userDoc.data()?['didaftarkan_oleh'];
         notifyListeners();
       }
     } catch (error) {
@@ -20,9 +22,10 @@ class UserData extends ChangeNotifier {
   }
   
   // Metode untuk memperbarui data pengguna
-  void updateUserData(String newName, String newEmail) {
+  void updateUserData(String newName, String newEmail, String newPelatih) {
     name = newName;
     email = newEmail;
+    pelatih = newPelatih;
     notifyListeners();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_sinarindo/screens/homeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project_sinarindo/models/user_data.dart';
@@ -70,8 +71,16 @@ class _SignInScreenState extends State<SignInScreen> {
                     email: _emailTextController.text, 
                     password: _passwordTextController.text)
                     .then((value) async {
-                      Provider.of<UserData>(context, listen: false).updateUserData(
-                        value.user?.displayName ?? "Guest", value.user?.email ?? "guest@example.com");
+                      var userDoc = await FirebaseFirestore.instance.collection('users').doc(value.user?.uid).get();
+                        if (userDoc.exists) {
+                          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
+                          
+                          Provider.of<UserData>(context, listen: false).updateUserData(
+                            value.user?.displayName ?? "Guest", 
+                            value.user?.email ?? "guest@example.com", 
+                            pelatih
+                          );
+                        }
 
                         // Set status login sebagai true saat pengguna berhasil login
                         final SharedPreferences prefs = await SharedPreferences.getInstance();

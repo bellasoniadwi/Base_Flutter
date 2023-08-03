@@ -25,6 +25,7 @@ class _AddStudent extends State<AddStudent> {
   final TextEditingController _nimController = TextEditingController();
   final TextEditingController _angkatanController = TextEditingController();
   final TextEditingController _tanggalController = TextEditingController();
+  final TextEditingController _pelatihController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String imageUrl = '';
   String _imagePath = '';
@@ -95,15 +96,14 @@ class _AddStudent extends State<AddStudent> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Ambil data pengguna dari Firestore berdasarkan UID
         var userDoc =  await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (userDoc.exists) {
-          String name = userDoc.data()?['name'] ?? 'Guest';
-          String email = userDoc.data()?['email'] ?? 'guest@example.com';
-
-          // Set the values in the text controllers
+          String name = userDoc.data()?['name'] ?? '';
+          String email = userDoc.data()?['email'] ?? '';
+          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
           _nameController.text = name;
-          Provider.of<UserData>(context, listen: false).updateUserData(name, email);
+          _pelatihController.text = pelatih;
+          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih);
         }
       }
     } catch (error) {
@@ -168,6 +168,14 @@ class _AddStudent extends State<AddStudent> {
                       .digitsOnly // Hanya menerima input angka
                 ],
                 keyboardType: TextInputType.number, // Keyboard tipe angka
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              TextField(
+                controller: _pelatihController,
+                decoration: InputDecoration(labelText: 'Pelatih'),
+                enabled: false,
               ),
               const SizedBox(
                 height: 20.0,
@@ -252,6 +260,7 @@ class _AddStudent extends State<AddStudent> {
                   final Timestamp tanggalTimestamp =
                       Timestamp.fromDate(selectedDate);
                   final String keterangan = dropdownvalue;
+                  final String pelatih = _pelatihController.text;
 
                   // Get current latitude and longitude
                   _currentLocation = await _getCurrentLocation();
@@ -276,11 +285,13 @@ class _AddStudent extends State<AddStudent> {
                       "latitude": latitude,
                       "longitude": longitude,
                       "keterangan": keterangan,
+                      "pelatih": pelatih,
                     });
                     _nameController.text = '';
                     _nimController.text = '';
                     _angkatanController.text = '';
                     _tanggalController.text = '';
+                    _pelatihController.text = '';
                     dropdownvalue = '';
                     imageUrl = '';
                   }
