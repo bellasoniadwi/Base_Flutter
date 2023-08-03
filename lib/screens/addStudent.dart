@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:project_sinarindo/models/user_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddStudent extends StatefulWidget {
   const AddStudent({Key? key}) : super(key: key);
@@ -36,8 +39,7 @@ class _AddStudent extends State<AddStudent> {
     });
     Uint8List imageBytes = await file.readAsBytes();
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference referenceImageToUpload =
-        FirebaseStorage.instance.ref().child('images/$uniqueFileName.jpg');
+    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child('images/$uniqueFileName.jpg');
     await referenceImageToUpload.putData(imageBytes);
 
     String imageUrl = await referenceImageToUpload.getDownloadURL();
@@ -84,6 +86,31 @@ class _AddStudent extends State<AddStudent> {
     return await Geolocator.getCurrentPosition();
   }
 
+  void initState() {
+    super.initState();
+    fetchUserDataFromFirestore();
+  }
+
+  Future<void> fetchUserDataFromFirestore() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Ambil data pengguna dari Firestore berdasarkan UID
+        var userDoc =  await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          String name = userDoc.data()?['name'] ?? 'Guest';
+          String email = userDoc.data()?['email'] ?? 'guest@example.com';
+
+          // Set the values in the text controllers
+          _nameController.text = name;
+          Provider.of<UserData>(context, listen: false).updateUserData(name, email);
+        }
+      }
+    } catch (error) {
+      print("Error fetching user data: $error");
+    }
+  }
+
   //Membuat pilihan dropdown kehadiran
   // Initial Selected Value
   String dropdownvalue = 'Masukkan Keterangan';
@@ -119,6 +146,7 @@ class _AddStudent extends State<AddStudent> {
               TextField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Name'),
+                enabled: false,
               ),
               const SizedBox(
                 height: 20.0,
