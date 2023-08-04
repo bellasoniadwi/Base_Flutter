@@ -62,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
+        foregroundColor: Colors.white,
         overlayOpacity: 0.1,
         overlayColor: Colors.black,
         backgroundColor: Color.fromARGB(255, 146, 107, 252),
