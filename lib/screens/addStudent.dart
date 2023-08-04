@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +23,6 @@ class _AddStudent extends State<AddStudent> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nimController = TextEditingController();
   final TextEditingController _angkatanController = TextEditingController();
-  final TextEditingController _tanggalController = TextEditingController();
   final TextEditingController _pelatihController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String imageUrl = '';
@@ -45,21 +43,6 @@ class _AddStudent extends State<AddStudent> {
 
     String imageUrl = await referenceImageToUpload.getDownloadURL();
     setImageUrl(imageUrl);
-  }
-
-  // Fungsi Pembantu Date
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        _tanggalController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
-      });
-    }
   }
 
   // Fungsi Pembantu Image untuk mengatur imageUrl dengan menggunakan setState.
@@ -180,21 +163,6 @@ class _AddStudent extends State<AddStudent> {
               const SizedBox(
                 height: 20.0,
               ),
-              TextField(
-                controller: _tanggalController,
-                decoration: InputDecoration(
-                  labelText: 'Tanggal Lahir',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                ),
-                keyboardType: TextInputType.datetime,
-                readOnly: true, // Input hanya bisa melalui date picker
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
               DropdownButton<String?>(
                 // Initial Value
                 value: dropdownvalue,
@@ -257,8 +225,6 @@ class _AddStudent extends State<AddStudent> {
                   final String name = _nameController.text;
                   final String nim = _nimController.text;
                   final String angkatan = _angkatanController.text;
-                  final Timestamp tanggalTimestamp =
-                      Timestamp.fromDate(selectedDate);
                   final String keterangan = dropdownvalue;
                   final String pelatih = _pelatihController.text;
 
@@ -278,8 +244,6 @@ class _AddStudent extends State<AddStudent> {
                       "name": name,
                       "nim": nim,
                       "angkatan": angkatan,
-                      "tanggal":
-                          tanggalTimestamp, // Gunakan tanggal yang diambil dari _tanggalController
                       "timestamps": FieldValue.serverTimestamp(),
                       "image": imageUrl,
                       "latitude": latitude,
@@ -290,7 +254,6 @@ class _AddStudent extends State<AddStudent> {
                     _nameController.text = '';
                     _nimController.text = '';
                     _angkatanController.text = '';
-                    _tanggalController.text = '';
                     _pelatihController.text = '';
                     dropdownvalue = '';
                     imageUrl = '';
