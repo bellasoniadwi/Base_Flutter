@@ -28,6 +28,9 @@ class _AddStudent extends State<AddStudent> {
   String imageUrl = '';
   String _imagePath = '';
 
+  String? _selectedValue;
+  List<String> listOfValue = ['Masuk', 'Izin', 'Sakit'];
+
   // Fungsi Pick Image dan Penyimpanan ke Firebase
   Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
     ImagePicker imagePicker = ImagePicker();
@@ -128,7 +131,11 @@ class _AddStudent extends State<AddStudent> {
               ),
               TextField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Masukkan Nama',
+                    labelText: 'NAMA',
+                ),
                 enabled: false,
               ),
               const SizedBox(
@@ -136,7 +143,11 @@ class _AddStudent extends State<AddStudent> {
               ),
               TextField(
                 controller: _nimController,
-                decoration: InputDecoration(labelText: 'NIM'),
+                decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Masukkan Nim',
+                    labelText: 'NIM',
+                ),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
               ),
@@ -145,7 +156,11 @@ class _AddStudent extends State<AddStudent> {
               ),
               TextField(
                 controller: _angkatanController,
-                decoration: InputDecoration(labelText: 'Angkatan'),
+                decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Masukkan Angkatan',
+                    labelText: 'ANGKATAN',
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter
                       .digitsOnly // Hanya menerima input angka
@@ -157,32 +172,43 @@ class _AddStudent extends State<AddStudent> {
               ),
               TextField(
                 controller: _pelatihController,
-                decoration: InputDecoration(labelText: 'Pelatih'),
+                decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: 'Masukkan Pelatih',
+                    labelText: 'PELATIH',
+                ),
                 enabled: false,
               ),
               const SizedBox(
                 height: 20.0,
               ),
-              DropdownButton<String?>(
-                // Initial Value
-                value: dropdownvalue,
-
-                // Down Arrow Icon
-                icon: const Icon(Icons.keyboard_arrow_down),
-
-                // Array list of items
-                items: items.map<DropdownMenuItem<String?>>((String items) {
-                  return DropdownMenuItem(
-                    value: items,
-                    child: Text(items),
-                  );
-                }).toList(), // After selecting the desired option,it will
-                // change button value to selected value
+              DropdownButtonFormField(
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                ),
+                value: _selectedValue,
+                hint: Text(
+                  'Pilih Keterangan',
+                ),
+                isExpanded: true,
                 onChanged: (value) {
                   setState(() {
-                    dropdownvalue = value!;
+                    _selectedValue = value as String?;
                   });
                 },
+                onSaved: (value) {
+                  setState(() {
+                    _selectedValue = value as String?;
+                  });
+                },
+                items: listOfValue.map((String val) {
+                  return DropdownMenuItem(
+                    value: val,
+                    child: Text(
+                      val,
+                    ),
+                  );
+                }).toList(),
               ),
               const SizedBox(
                 height: 20.0,
@@ -225,7 +251,7 @@ class _AddStudent extends State<AddStudent> {
                   final String name = _nameController.text;
                   final String nim = _nimController.text;
                   final String angkatan = _angkatanController.text;
-                  final String keterangan = dropdownvalue;
+                  final String keterangan = _selectedValue.toString();
                   final String pelatih = _pelatihController.text;
 
                   // Get current latitude and longitude
