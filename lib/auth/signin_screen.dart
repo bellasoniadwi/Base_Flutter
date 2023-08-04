@@ -79,7 +79,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     .get();
                 if (userDoc.exists) {
                   String role = userDoc.data()?['role'] ?? '';
-                  if (role == 'Peserta') {
+                  if (role == 'Siswa') {
                     String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
 
                     Provider.of<UserData>(context, listen: false)
@@ -104,7 +104,8 @@ class _SignInScreenState extends State<SignInScreen> {
               } catch (error) {
                 print("Error ${error.toString()}");
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${error.toString()}')));
+                    SnackBar(content: Text(
+                            'Invalid Email or Password')));
               }
             }),
             // signUpOption()
