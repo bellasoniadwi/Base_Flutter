@@ -38,8 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         // Ambil data pengguna dari Firestore berdasarkan UID
-        var userDoc =
-            await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        var userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           setState(() {
             _userName = userDoc.data()?['name'] ?? 'Guest';
@@ -55,13 +57,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(120),
-          child: CustomAppBar(),
-        ),
+        preferredSize: Size.fromHeight(120),
+        child: CustomAppBar(),
+      ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         overlayOpacity: 0.1,
         overlayColor: Colors.black,
+        backgroundColor: Color.fromARGB(255, 146, 107, 252),
         children: [
           SpeedDialChild(
             child: const Icon(Icons.add),
@@ -96,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                      builder: (context) => DetailStudent(
-                        documentSnapshot: documentSnapshot),
+                        builder: (context) =>
+                            DetailStudent(documentSnapshot: documentSnapshot),
                       ),
                     ),
                     leading: ClipOval(
@@ -168,7 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> scanQR() async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR,
+        '#ff6666',
+        'Cancel',
+        true,
+        ScanMode.QR,
       );
 
       // Redirect to the detail page with the scanned document ID
