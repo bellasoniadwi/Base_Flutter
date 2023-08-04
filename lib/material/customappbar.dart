@@ -11,7 +11,6 @@ class CustomAppBar extends StatefulWidget {
   _CustomAppBarState createState() => _CustomAppBarState();
 }
 
-
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   void initState() {
@@ -24,13 +23,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         // Ambil data pengguna dari Firestore berdasarkan UID
-        var userDoc =
-            await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        var userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           String name = userDoc.data()?['name'] ?? 'Guest';
           String email = userDoc.data()?['email'] ?? 'guest@example.com';
-          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
-          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih);
+          String pelatih =
+              userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
+          Provider.of<UserData>(context, listen: false)
+              .updateUserData(name, email, pelatih);
         }
       }
     } catch (error) {
@@ -75,17 +78,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 "Hello,\n$accountName",
                 style: Theme.of(context).textTheme.headline6?.copyWith(
                       color: Colors.white,
+                      fontSize: 17,
                     ),
               ),
               IconButton(
-                icon: Icon(Icons.logout, color: Colors.white,),
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
                 onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                final SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.remove('isLoggedIn'); // Hapus status login saat logout
-                print("Signed Out");
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SignInScreen()));
-              },
+                  await FirebaseAuth.instance.signOut();
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('isLoggedIn'); // Hapus status login saat logout
+                  print("Signed Out");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => SignInScreen()));
+                },
               ),
             ],
           ),
