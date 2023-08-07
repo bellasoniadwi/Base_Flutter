@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class AddStudent extends StatefulWidget {
   const AddStudent({Key? key}) : super(key: key);
@@ -41,7 +42,10 @@ class _AddStudent extends State<AddStudent> {
     });
     Uint8List imageBytes = await file.readAsBytes();
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child('images/$uniqueFileName.jpg');
+    String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
     await referenceImageToUpload.putData(imageBytes);
 
     String imageUrl = await referenceImageToUpload.getDownloadURL();
