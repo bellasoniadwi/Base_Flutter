@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -89,9 +90,10 @@ class _AddStudent extends State<AddStudent> {
           String name = userDoc.data()?['name'] ?? '';
           String email = userDoc.data()?['email'] ?? '';
           String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
+          String image = userDoc.data()?['image'] ?? '';
           _nameController.text = name;
           _pelatihController.text = pelatih;
-          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih);
+          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih, image);
         }
       }
     } catch (error) {
@@ -275,6 +277,19 @@ class _AddStudent extends State<AddStudent> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BaseScreen()),
+          ).then((data) {});
+        },
+        child: const Icon(
+          Icons.arrow_back,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.deepPurple,
       ),
     );
   }

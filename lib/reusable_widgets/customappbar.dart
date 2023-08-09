@@ -30,10 +30,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
         if (userDoc.exists) {
           String name = userDoc.data()?['name'] ?? 'Guest';
           String email = userDoc.data()?['email'] ?? 'guest@example.com';
-          String pelatih =
-              userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
+          String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
+          String image = userDoc.data()?['image'] ?? 'https://img.freepik.com/free-icon/user_318-159711.jpg';
           Provider.of<UserData>(context, listen: false)
-              .updateUserData(name, email, pelatih);
+              .updateUserData(name, email, pelatih, image);
         }
       }
     } catch (error) {
@@ -47,6 +47,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
     // Dapatkan data Nama dan Email dari variabel global
     final String accountName = userData.name ?? 'Guest';
+    final String urlImage = userData.image ?? 'https://img.freepik.com/free-icon/user_318-159711.jpg';
     
     return Container(
       padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
@@ -73,21 +74,37 @@ class _CustomAppBarState extends State<CustomAppBar> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Hello,\n$accountName",
-                style: Theme.of(context).textTheme.titleLarge,
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage('$urlImage'),
               ),
+              // Expanded(
+              //   flex: 2, // Menggunakan lebih banyak ruang daripada elemen lain dalam Row
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.only(left: 5),
+              //         child: Text(
+              //           "Hello,\n$accountName",
+              //           style: Theme.of(context).textTheme.titleLarge,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Container(
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color.fromARGB(255, 204, 175, 255), // Warna latar belakang bulatan
+                  color: Colors.white
                 ),
                 child: IconButton(
                   icon: Icon(
                     Icons.logout,
-                    color: Colors.white,
+                    color: Colors.deepPurple,
                   ),
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();

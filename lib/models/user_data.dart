@@ -5,6 +5,7 @@ class UserData extends ChangeNotifier {
   String? name;
   String? email;
   String? pelatih;
+  String? image;
 
   // Metode untuk memuat data pengguna dari Firestore berdasarkan UID
   Future<void> fetchUserData(String uid) async {
@@ -14,6 +15,7 @@ class UserData extends ChangeNotifier {
         name = userDoc.data()?['name'];
         email = userDoc.data()?['email'];
         pelatih = userDoc.data()?['didaftarkan_oleh'];
+        image = userDoc.data()?['image'];
         notifyListeners();
       }
     } catch (error) {
@@ -22,10 +24,11 @@ class UserData extends ChangeNotifier {
   }
   
   // Metode untuk memperbarui data pengguna
-  void updateUserData(String newName, String newEmail, String newPelatih) {
+  void updateUserData(String newName, String newEmail, String newPelatih, String newImage) {
     name = newName;
     email = newEmail;
     pelatih = newPelatih;
+    image = newImage;
     notifyListeners();
   }
 }
