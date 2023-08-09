@@ -22,8 +22,6 @@ class _AddStudent extends State<AddStudent> {
   final CollectionReference _students =
       FirebaseFirestore.instance.collection('students');
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nimController = TextEditingController();
-  final TextEditingController _angkatanController = TextEditingController();
   final TextEditingController _pelatihController = TextEditingController();
   DateTime selectedDate = DateTime.now();
   String imageUrl = '';
@@ -146,35 +144,6 @@ class _AddStudent extends State<AddStudent> {
                 height: 20.0,
               ),
               TextField(
-                controller: _nimController,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText: 'Masukkan Nim',
-                    labelText: 'NIM',
-                ),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              TextField(
-                controller: _angkatanController,
-                decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    hintText: 'Masukkan Angkatan',
-                    labelText: 'ANGKATAN',
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter
-                      .digitsOnly // Hanya menerima input angka
-                ],
-                keyboardType: TextInputType.number, // Keyboard tipe angka
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              TextField(
                 controller: _pelatihController,
                 decoration: InputDecoration(
                     border: const OutlineInputBorder(),
@@ -253,8 +222,6 @@ class _AddStudent extends State<AddStudent> {
                 child: Text('Simpan Data'),
                 onPressed: () async {
                   final String name = _nameController.text;
-                  final String nim = _nimController.text;
-                  final String angkatan = _angkatanController.text;
                   final String keterangan = _selectedValue.toString();
                   final String pelatih = _pelatihController.text;
 
@@ -272,8 +239,6 @@ class _AddStudent extends State<AddStudent> {
                   if (name != "") {
                     await _students.add({
                       "name": name,
-                      "nim": nim,
-                      "angkatan": angkatan,
                       "timestamps": FieldValue.serverTimestamp(),
                       "image": imageUrl,
                       "latitude": latitude,
@@ -282,8 +247,6 @@ class _AddStudent extends State<AddStudent> {
                       "pelatih": pelatih,
                     });
                     _nameController.text = '';
-                    _nimController.text = '';
-                    _angkatanController.text = '';
                     _pelatihController.text = '';
                     dropdownvalue = '';
                     imageUrl = '';

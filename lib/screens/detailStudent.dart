@@ -91,22 +91,6 @@ class _DetailStudentState extends State<DetailStudent> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('NIM             : ',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600)),
-                            Expanded(
-                              child: Text(widget.documentSnapshot?['nim'] ?? '',
-                                  style: TextStyle(fontSize: 16)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
                             const Text('Nama          : ',
                                 style: TextStyle(
                                     color: Colors.black,
@@ -115,28 +99,6 @@ class _DetailStudentState extends State<DetailStudent> {
                             Expanded(
                               child: Text(widget.documentSnapshot?['name'] ?? '',
                                   style: TextStyle(fontSize: 16)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Angkatan    : ',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                            Expanded(
-                              child: Text(
-                                widget.documentSnapshot?['angkatan'] ?? '',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
                             ),
                           ],
                         ),

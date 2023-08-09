@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/homeScreen.dart';
 
 class DetailScan extends StatefulWidget {
-  final String? scannedNIM;
+  final String? scannedId;
 
-  const DetailScan({Key? key, this.scannedNIM}) : super(key: key);
+  const DetailScan({Key? key, this.scannedId}) : super(key: key);
 
   @override
   State<DetailScan> createState() => _DetailScanState();
@@ -20,7 +20,7 @@ class _DetailScanState extends State<DetailScan> {
   @override
   void initState() {
     super.initState();
-    _studentStream = _students.doc(widget.scannedNIM!).snapshots(); // Get a stream of the document
+    _studentStream = _students.doc(widget.scannedId!).snapshots(); // Get a stream of the document
   }
 
   @override
@@ -45,14 +45,12 @@ class _DetailScanState extends State<DetailScan> {
           DocumentSnapshot documentSnapshot = snapshot.data!;
           if (!documentSnapshot.exists) {
             return Center(
-              child: Text('Data Not Found\nHasil Scan: ${widget.scannedNIM}'),
+              child: Text('Data Not Found\nHasil Scan: ${widget.scannedId}'),
             );
           }
 
           // Get the data from the documentSnapshot
-          String nim = documentSnapshot['nim'] ?? '';
           String name = documentSnapshot['name'] ?? '';
-          String angkatan = documentSnapshot['angkatan'] ?? '';
           String latitude = documentSnapshot['latitude'] ?? '';
           String longitude = documentSnapshot['longitude'] ?? '';
           Timestamp timestamps = documentSnapshot['timestamps'];
@@ -131,22 +129,6 @@ class _DetailScanState extends State<DetailScan> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text('NIM             : ',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600)),
-                                Expanded(
-                                  child: Text(nim ?? '',
-                                      style: TextStyle(fontSize: 16)),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
                                 const Text('Nama          : ',
                                     style: TextStyle(
                                         color: Colors.black,
@@ -156,28 +138,6 @@ class _DetailScanState extends State<DetailScan> {
                                   child: Text(
                                       name ?? '',
                                       style: TextStyle(fontSize: 16)),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Angkatan    : ',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    angkatan ?? '',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),

@@ -15,8 +15,6 @@ class _EditStudentState extends State<EditStudent> {
   final CollectionReference _students =
       FirebaseFirestore.instance.collection('students');
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nimController = TextEditingController();
-  final TextEditingController _angkatanController = TextEditingController();
 
   String imageUrl = '';
 
@@ -24,8 +22,6 @@ class _EditStudentState extends State<EditStudent> {
       super.initState();
       if (widget.documentSnapshot != null) {
       _nameController.text = widget.documentSnapshot!['name'];
-      _nimController.text = widget.documentSnapshot!['nim'];
-      _angkatanController.text = widget.documentSnapshot!['angkatan'];
     }
   }
 
@@ -57,27 +53,6 @@ class _EditStudentState extends State<EditStudent> {
               const SizedBox(
                 height: 20.0,
               ),
-              TextField(
-                controller: _nimController,
-                decoration: InputDecoration(labelText: 'NIM'),
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              TextField(
-                controller: _angkatanController,
-                decoration: InputDecoration(labelText: 'Angkatan'),
-                inputFormatters: [
-                  FilteringTextInputFormatter
-                      .digitsOnly // Hanya menerima input angka
-                ],
-                keyboardType: TextInputType.number, // Keyboard tipe angka
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
               const SizedBox(
                 height: 20.0,
               ),
@@ -88,19 +63,13 @@ class _EditStudentState extends State<EditStudent> {
               child: Text('Update Data'),
               onPressed: () async {
                 final String name = _nameController.text;
-                final String nim = _nimController.text;
-                final String angkatan = _angkatanController.text;
 
                 if (name != "" && widget.documentSnapshot != null) {
                   await _students.doc(widget.documentSnapshot!.id).update({
                     "name": name,
-                    "nim": nim,
-                    "angkatan": angkatan,
                     "timestamps": FieldValue.serverTimestamp(),
                   });
                   _nameController.text = '';
-                  _nimController.text = '';
-                  _angkatanController.text = '';
                 }
 
                 ScaffoldMessenger.of(context).showSnackBar(

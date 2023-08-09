@@ -33,7 +33,7 @@ class _ScanStudentState extends State<ScanStudent> {
         context,
         MaterialPageRoute(
           builder: (context) => DetailScan(
-            scannedNIM: barcodeScanRes,
+            scannedId: barcodeScanRes,
           ),
         ),
       );
