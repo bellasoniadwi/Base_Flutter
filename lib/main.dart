@@ -1,12 +1,12 @@
-import 'package:project_sinarindo/screens/homeScreen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:project_sinarindo/auth/signin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:project_sinarindo/auth/signin_screen.dart';
+import 'package:project_sinarindo/models/user_data.dart';
+import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:project_sinarindo/models/user_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
+void main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   final bool isLoggedIn = await checkLoggedInStatus();
@@ -28,10 +28,30 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
-          useMaterial3: true,
+        primarySwatch: Colors.blue,
+        fontFamily: 'Poppins',
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          displayMedium: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: Colors.black,
+          ),
         ),
-        home: isLoggedIn ? HomeScreen() : SignInScreen(),
+      ),
+        home: isLoggedIn ? BaseScreen() : SignInScreen(),
       ),
     );
   }

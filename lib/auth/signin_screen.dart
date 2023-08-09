@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:project_sinarindo/screens/homeScreen.dart';
+import 'package:project_sinarindo/constants/color.dart';
+import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:project_sinarindo/reusable_widgets/reusable_widget.dart';
-import 'package:project_sinarindo/utils/color_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +94,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     prefs.setBool('isLoggedIn', true);
 
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                        MaterialPageRoute(builder: (context) => BaseScreen()));
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Text(
@@ -114,24 +114,4 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
-
-  // Row signUpOption() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: [
-  //       const Text("Don't have account?",
-  //           style: TextStyle(color: Colors.white70)),
-  //       GestureDetector(
-  //         onTap: () {
-  //           Navigator.push(context,
-  //               MaterialPageRoute(builder: (context) => SignUpScreen()));
-  //         },
-  //         child: const Text(
-  //           "  Sign Up",
-  //           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-  //         ),
-  //       )
-  //     ],
-  //   );
-  // }
 }

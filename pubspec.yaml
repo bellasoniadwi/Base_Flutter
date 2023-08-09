@@ -48,6 +48,7 @@ dependencies:
   firebase_auth: ^4.7.2
   provider: ^6.0.5
   shared_preferences: ^2.2.0
+  video_player: ^2.7.0
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/icons/
     - assets/images/
   #   - images/a_dot_ham.jpeg
 
@@ -86,6 +88,17 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/poppins/Poppins-SemiBold.ttf
+          weight: 500
+
+        - asset: assets/fonts/poppins/Poppins-Bold.ttf
+          weight: 700
+
+        - asset: assets/fonts/poppins/Poppins-Medium.ttf
+          weight: 300
   # fonts:
   #   - family: Schyler
   #     fonts:
