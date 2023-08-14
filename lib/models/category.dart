@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:project_sinarindo/materials/addStudent.dart';
 import 'package:project_sinarindo/materials/detailScan.dart';
+import 'package:project_sinarindo/materials/profile.dart';
 import 'package:project_sinarindo/materials/riwayatAbsen.dart';
-import 'package:project_sinarindo/screens/course_screen.dart';
 
 class Category {
   String thumbnail;
@@ -57,7 +57,7 @@ List<Category> categoryList = [
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const AddStudent(),
+          builder: (context) => const Profile(),
         ),
       );
     },

@@ -91,9 +91,11 @@ class _AddStudent extends State<AddStudent> {
           String email = userDoc.data()?['email'] ?? '';
           String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
           String image = userDoc.data()?['image'] ?? '';
+          String nomor_induk = userDoc.data()?['nomor_induk'] ?? '';
+          String angkatan = userDoc.data()?['angkatan'] ?? '';
           _nameController.text = name;
           _pelatihController.text = pelatih;
-          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih, image);
+          Provider.of<UserData>(context, listen: false).updateUserData(name, email, pelatih, image, nomor_induk, angkatan);
         }
       }
     } catch (error) {

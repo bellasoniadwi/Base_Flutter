@@ -32,8 +32,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
           String email = userDoc.data()?['email'] ?? 'guest@example.com';
           String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? 'guest@example.com';
           String image = userDoc.data()?['image'] ?? 'https://img.freepik.com/free-icon/user_318-159711.jpg';
+          String nomor_induk = userDoc.data()?['nomor_induk'] ?? 'https://img.freepik.com/free-icon/user_318-159711.jpg';
+          String angkatan = userDoc.data()?['angkatan'] ?? 'https://img.freepik.com/free-icon/user_318-159711.jpg';
           Provider.of<UserData>(context, listen: false)
-              .updateUserData(name, email, pelatih, image);
+              .updateUserData(name, email, pelatih, image, nomor_induk, angkatan);
         }
       }
     } catch (error) {
