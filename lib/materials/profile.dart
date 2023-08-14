@@ -134,7 +134,7 @@ class _Profile extends State<Profile> {
                     ),
                     height: 200,
                     width: 200,
-                    margin: const EdgeInsets.only(left: 50.0, right: 30.0, top: 30),
+                    margin: const EdgeInsets.only(left: 50.0, right: 30.0, top: 15),
                   ),
                   const SizedBox(
                     height: 30.0,
