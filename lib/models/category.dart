@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -53,13 +55,39 @@ List<Category> categoryList = [
   Category(
     name: 'Lihat Profil',
     thumbnail: 'assets/icons/design.jpg',
-    onTapHandler: (context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Profile(),
-        ),
-      );
+    onTapHandler: (context) async {
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        try {
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+          
+          // Jika data ditemukan, buka halaman profil dengan dokumen snapshot
+          if (userDoc.exists) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Profile(documentSnapshot: userDoc),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('User data not found')),
+            );
+          }
+        } catch (error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error fetching user data: $error')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('User not logged in')),
+        );
+      }
     },
   ),
 ];

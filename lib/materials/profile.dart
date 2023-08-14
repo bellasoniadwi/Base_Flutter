@@ -1,19 +1,15 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+  final DocumentSnapshot? documentSnapshot;
+
+  const Profile({Key? key, this.documentSnapshot}) : super(key: key);
 
   @override
   State<Profile> createState() => _Profile();
@@ -24,6 +20,8 @@ class _Profile extends State<Profile> {
   final TextEditingController _pelatihController = TextEditingController();
   final TextEditingController _nomorindukController = TextEditingController();
   final TextEditingController _angkatanController = TextEditingController();
+  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
+
   String image = '';
 
   void initState() {
@@ -63,13 +61,9 @@ class _Profile extends State<Profile> {
   Widget build(BuildContext context) {
     final userData = Provider.of<UserData>(context);
 
-    // Dapatkan data Nama dan Email dari variabel global
-    final String accountName = userData.name ?? 'Name';
+    // Dapatkan data image dari variabel global
     final String accountImage = userData.image ??
         'https://img.freepik.com/free-icon/user_318-159711.jpg';
-    final String accountPelatih = userData.pelatih ?? 'Pelatih';
-    final String accountNomorInduk = userData.nomor_induk ?? 'Nomor Induk';
-    final String accountAngkatan = userData.angkatan ?? 'Angkatan';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -176,7 +170,8 @@ class _Profile extends State<Profile> {
                       hintText: 'Masukkan Nomor Induk',
                       labelText: 'NOMOR INDUK',
                     ),
-                    enabled: false,
+                    keyboardType: TextInputType.number,
+                    // enabled: false,
                   ),
                   const SizedBox(
                     height: 20.0,
@@ -188,10 +183,50 @@ class _Profile extends State<Profile> {
                       hintText: 'Masukkan Angkatan',
                       labelText: 'ANGKATAN',
                     ),
-                    enabled: false,
+                    keyboardType: TextInputType.number,
+                    // enabled: false,
                   ),
                   const SizedBox(
                     height: 20.0,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      minimumSize: const Size.fromHeight(50),
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Colors.deepPurple,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
+                      ),
+                    ),
+                    child: Text('Update Data Profile',
+                    style: TextStyle(color: Colors.deepPurple),),
+                    onPressed: () async {
+                      final String nomor_induk = _nomorindukController.text;
+                      final String angkatan = _angkatanController.text;
+
+                      if (widget.documentSnapshot != null) {
+                        await _users.doc(widget.documentSnapshot!.id).update({
+                          "nomor_induk": nomor_induk,
+                          "angkatan": angkatan,
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Profil anda berhasil diubah'), backgroundColor: Colors.deepPurpleAccent,)
+                        );
+                        Navigator.pop(context);
+                        // Tambahkan kode untuk memperbarui state atau navigasi ke halaman lain jika perlu
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Document snapshot is null'), backgroundColor: Colors.red,)
+                        );
+                      };
+                    },
+                  ),
+                  const SizedBox(
+                    height: 80.0,
                   ),
                 ],
               ),
