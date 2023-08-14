@@ -82,12 +82,15 @@ class _SignInScreenState extends State<SignInScreen> {
                   String role = userDoc.data()?['role'] ?? '';
                   if (role == 'Siswa') {
                     String pelatih = userDoc.data()?['didaftarkan_oleh'] ?? '';
+                    String image = userDoc.data()?['image'] ?? '';
+                    String nomor_induk = userDoc.data()?['nomor_induk'] ?? '';
+                    String angkatan = userDoc.data()?['angkatan'] ?? '';
 
                     Provider.of<UserData>(context, listen: false)
                         .updateUserData(
                             userCredential.user?.displayName ?? "Guest",
                             userCredential.user?.email ?? "guest@example.com",
-                            pelatih);
+                            pelatih, image, nomor_induk, angkatan);
 
                     // Set status login sebagai true saat pengguna berhasil login
                     final SharedPreferences prefs =
