@@ -26,7 +26,7 @@ class _DetailStudentState extends State<DetailStudent> {
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(50),
               ),
-              color: Colors.deepPurple,
+              color: Colors.blueAccent,
             ),
             child: Stack(
               children: [
@@ -49,7 +49,7 @@ class _DetailStudentState extends State<DetailStudent> {
                     left: 20,
                     child: Text(
                       "Detail Absensi",
-                      style: TextStyle(fontSize: 30, color: Colors.deepPurple),
+                      style: TextStyle(fontSize: 30, color: Colors.blueAccent),
                     ))
               ],
             ),
@@ -209,7 +209,7 @@ class _DetailStudentState extends State<DetailStudent> {
               .then((data) {});
         },
         child: const Icon(Icons.arrow_back, color: Colors.white,),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

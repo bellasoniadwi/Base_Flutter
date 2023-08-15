@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project_sinarindo/auth/reset_password.dart';
 import 'package:project_sinarindo/constants/color.dart';
 import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,9 +29,9 @@ class _SignInScreenState extends State<SignInScreen> {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-            hexStringToColor("CF40FF"),
-            hexStringToColor("9546C4"),
-            hexStringToColor("5E61F4")
+            hexStringToColor("3389FF"),
+            hexStringToColor("#5F96E2"),
+            hexStringToColor("104FA6")
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: SingleChildScrollView(
             child: Padding(
@@ -42,7 +43,7 @@ class _SignInScreenState extends State<SignInScreen> {
               height: 30,
             ),
             reusableTextField(
-              "Enter Email",
+              "Masukkan Email Anda",
               Icons.mail,
               controller: _emailTextController,
             ),
@@ -50,7 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
               height: 30,
             ),
             reusableTextField(
-              "Enter Password",
+              "Masukkan Password Anda",
               Icons.lock_outlined,
               isPasswordType: true,
               isPasswordVisible: _isPasswordVisible,
@@ -64,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(
               height: 30,
             ),
-            SignInSignUpButton(context, true, () async {
+            AuthButton(context, true, () async {
               try {
                 final UserCredential userCredential =
                     await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -89,7 +90,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         .updateUserData(
                             userCredential.user?.displayName ?? "Guest",
                             userCredential.user?.email ?? "guest@example.com",
-                            pelatih, image, nomor_induk, angkatan);
+                            pelatih,
+                            image,
+                            nomor_induk,
+                            angkatan);
 
                     // Set status login sebagai true saat pengguna berhasil login
                     final SharedPreferences prefs =
@@ -107,11 +111,35 @@ class _SignInScreenState extends State<SignInScreen> {
               } catch (error) {
                 print("Error ${error.toString()}");
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(
-                            'Invalid Email or Password')));
+                    SnackBar(content: Text('Invalid Email or Password')));
               }
             }),
-            // signUpOption()
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (context) {
+                          return ResetPassword();
+                        },
+                        )
+                      );
+                    },
+                    child: const Text(
+                      "Lupa password?",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ]),
         )),
       ),

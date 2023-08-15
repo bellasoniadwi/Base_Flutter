@@ -128,7 +128,7 @@ class _AddStudent extends State<AddStudent> {
                   '\n\nFORM ABSENSI',
                   style: TextStyle(
                       fontSize: 50,
-                      color: Colors.deepPurple,
+                      color: Colors.blueAccent,
                       fontWeight: FontWeight.bold),
                 ),
               ),
@@ -192,11 +192,11 @@ class _AddStudent extends State<AddStudent> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.deepPurple,
+                  primary: Colors.blueAccent,
                   minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
-                      color: Colors.deepPurple,
+                      color: Colors.blueAccent,
                       width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
@@ -213,7 +213,7 @@ class _AddStudent extends State<AddStudent> {
                             10), // Add some spacing between the icon and text
                     Text(
                       'Ambil Foto',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -231,14 +231,14 @@ class _AddStudent extends State<AddStudent> {
                   minimumSize: const Size.fromHeight(50),
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
-                      color: Colors.deepPurple,
+                      color: Colors.blueAccent,
                       width: 2.0,
                     ),
                     borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
                   ),
                 ),
                 child: Text('Simpan Data',
-                style: TextStyle(color: Colors.deepPurple),),
+                style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),),
                 onPressed: () async {
                   final String name = _nameController.text;
                   final String keterangan = _selectedValue.toString();
@@ -291,7 +291,7 @@ class _AddStudent extends State<AddStudent> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

@@ -77,7 +77,7 @@ class _Profile extends State<Profile> {
                 borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(50),
                 ),
-                color: Colors.deepPurple,
+                color: Colors.blueAccent,
               ),
               child: Stack(
                 children: [
@@ -100,7 +100,7 @@ class _Profile extends State<Profile> {
                       left: 20,
                       child: Text(
                         "Profil Saya",
-                        style: TextStyle(fontSize: 30, color: Colors.deepPurple),
+                        style: TextStyle(fontSize: 30, color: Colors.blueAccent),
                       ))
                 ],
               ),
@@ -120,7 +120,7 @@ class _Profile extends State<Profile> {
                         fit: BoxFit.fitWidth,
                       ),
                       border: Border.all(
-                        color: Colors.deepPurple,
+                        color: Colors.blueAccent,
                         width: 8,
                       ),
                       borderRadius: BorderRadius.circular(20),
@@ -195,14 +195,14 @@ class _Profile extends State<Profile> {
                       minimumSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
-                          color: Colors.deepPurple,
+                          color: Colors.blueAccent,
                           width: 2.0,
                         ),
                         borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
                       ),
                     ),
                     child: Text('Update Data Profile',
-                    style: TextStyle(color: Colors.deepPurple),),
+                    style: TextStyle(color: Colors.blueAccent),),
                     onPressed: () async {
                       final String nomor_induk = _nomorindukController.text;
                       final String angkatan = _angkatanController.text;
@@ -214,7 +214,7 @@ class _Profile extends State<Profile> {
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Profil anda berhasil diubah'), backgroundColor: Colors.deepPurpleAccent,)
+                          SnackBar(content: Text('Profil anda berhasil diubah'), backgroundColor: Colors.blueAccent,)
                         );
                         Navigator.pop(context);
                         // Tambahkan kode untuk memperbarui state atau navigasi ke halaman lain jika perlu
@@ -244,7 +244,7 @@ class _Profile extends State<Profile> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }

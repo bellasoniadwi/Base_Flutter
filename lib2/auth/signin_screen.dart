@@ -65,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
             SizedBox(
               height: 30,
             ),
-            SignInSignUpButton(context, true, () async {
+            AuthButton(context, true, () async {
               try {
                 final UserCredential userCredential =
                     await FirebaseAuth.instance.signInWithEmailAndPassword(

@@ -65,8 +65,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
           end: Alignment.bottomRight,
           stops: [0.1, 0.5],
           colors: [
-            Color(0xff886ff2),
-            Color(0xff6849ef),
+            Color.fromARGB(255, 18, 95, 238),
+            Color.fromARGB(255, 69, 122, 220),
           ],
         ),
       ),
@@ -106,7 +106,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 child: IconButton(
                   icon: Icon(
                     Icons.logout,
-                    color: Colors.deepPurple,
+                    color: Colors.blueAccent,
                   ),
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();

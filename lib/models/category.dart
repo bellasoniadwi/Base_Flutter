@@ -23,7 +23,7 @@ class Category {
 List<Category> categoryList = [
   Category(
     name: 'Form Absensi',
-    thumbnail: 'assets/icons/laptop.jpg',
+    thumbnail: 'assets/icons/form.png',
     onTapHandler: (context) {
       Navigator.push(
         context,
@@ -35,7 +35,7 @@ List<Category> categoryList = [
   ),
   Category(
     name: 'Riwayat Absensi',
-    thumbnail: 'assets/icons/accounting.jpg',
+    thumbnail: 'assets/icons/history.png',
     onTapHandler: (context) {
       Navigator.push(
         context,
@@ -47,14 +47,14 @@ List<Category> categoryList = [
   ),
   Category(
     name: 'Scanner QR Code',
-    thumbnail: 'assets/icons/photography.jpg',
+    thumbnail: 'assets/icons/qrcode.png',
     onTapHandler: (context) {
       scanQR(context); // Panggil fungsi scanQR dengan melewatkan context
   },
   ),
   Category(
     name: 'Lihat Profil',
-    thumbnail: 'assets/icons/design.jpg',
+    thumbnail: 'assets/icons/profile.png',
     onTapHandler: (context) async {
       final user = FirebaseAuth.instance.currentUser;
 

@@ -64,7 +64,7 @@ class _DetailScanState extends State<DetailScan> {
                   borderRadius: BorderRadius.only(
                     bottomRight: Radius.circular(50),
                   ),
-                  color: Colors.deepPurple,
+                  color: Colors.blueAccent,
                 ),
                 child: Stack(
                   children: [
@@ -87,7 +87,7 @@ class _DetailScanState extends State<DetailScan> {
                         left: 20,
                         child: Text(
                           "Detail Absensi",
-                          style: TextStyle(fontSize: 30, color: Colors.deepPurple),
+                          style: TextStyle(fontSize: 30, color: Colors.blueAccent),
                         ))
                   ],
                 ),
@@ -255,7 +255,7 @@ class _DetailScanState extends State<DetailScan> {
           Icons.arrow_back,
           color: Colors.white,
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Colors.blueAccent,
       ),
     );
   }
