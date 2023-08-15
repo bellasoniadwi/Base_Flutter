@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:project_sinarindo/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Profile extends StatefulWidget {
   final DocumentSnapshot? documentSnapshot;
@@ -22,11 +27,39 @@ class _Profile extends State<Profile> {
   final TextEditingController _angkatanController = TextEditingController();
   final CollectionReference _users = FirebaseFirestore.instance.collection('users');
 
-  String image = '';
+  String imageUrl = '';
+  String _imagePath = '';
 
   void initState() {
     super.initState();
     fetchUserDataFromFirestore();
+  }
+
+  // Fungsi Pick Image dan Penyimpanan ke Firebase
+  Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (file == null) return;
+    setState(() {
+      _imagePath = file.path;
+    });
+    Uint8List imageBytes = await file.readAsBytes();
+    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
+    await referenceImageToUpload.putData(imageBytes);
+
+    String imageUrl = await referenceImageToUpload.getDownloadURL();
+    setImageUrl(imageUrl);
+  }
+
+  // Fungsi Pembantu Image untuk mengatur imageUrl dengan menggunakan setState.
+  void _setImageUrl(String imageUrl) {
+    setState(() {
+      this.imageUrl = imageUrl;
+    });
   }
 
   Future<void> fetchUserDataFromFirestore() async {
@@ -191,6 +224,34 @@ class _Profile extends State<Profile> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      primary: Colors.blueAccent,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    onPressed: () => _pickAndSetImage(_setImageUrl),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image_rounded,
+                            color: Colors.white), // Icon added here
+                        SizedBox(
+                            width:
+                                10), // Add some spacing between the icon and text
+                        Text(
+                          'Pilih Foto',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  _imagePath != '' ? Image.file(File(_imagePath)) : Container(),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
                       primary: Colors.white,
                       minimumSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
@@ -207,10 +268,16 @@ class _Profile extends State<Profile> {
                       final String nomor_induk = _nomorindukController.text;
                       final String angkatan = _angkatanController.text;
 
+                      if (imageUrl.isEmpty) {
+                        imageUrl = accountImage;
+                        return;
+                      }
+
                       if (widget.documentSnapshot != null) {
                         await _users.doc(widget.documentSnapshot!.id).update({
                           "nomor_induk": nomor_induk,
                           "angkatan": angkatan,
+                          "image": imageUrl,
                         });
 
                         ScaffoldMessenger.of(context).showSnackBar(
