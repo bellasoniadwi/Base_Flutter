@@ -25,7 +25,8 @@ class _Profile extends State<Profile> {
   final TextEditingController _pelatihController = TextEditingController();
   final TextEditingController _nomorindukController = TextEditingController();
   final TextEditingController _angkatanController = TextEditingController();
-  final CollectionReference _users = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _users =
+      FirebaseFirestore.instance.collection('users');
 
   String imageUrl = '';
   String _imagePath = '';
@@ -47,8 +48,10 @@ class _Profile extends State<Profile> {
     String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
     String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-    String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
-    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
+    String fileName =
+        'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+    Reference referenceImageToUpload =
+        FirebaseStorage.instance.ref().child(fileName);
     await referenceImageToUpload.putData(imageBytes);
 
     String imageUrl = await referenceImageToUpload.getDownloadURL();
@@ -133,7 +136,8 @@ class _Profile extends State<Profile> {
                       left: 20,
                       child: Text(
                         "Profil Saya",
-                        style: TextStyle(fontSize: 30, color: Colors.blueAccent),
+                        style:
+                            TextStyle(fontSize: 30, color: Colors.blueAccent),
                       ))
                 ],
               ),
@@ -154,9 +158,9 @@ class _Profile extends State<Profile> {
                       ),
                       border: Border.all(
                         color: Colors.blueAccent,
-                        width: 8,
+                        width: 4,
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(125),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black,
@@ -165,9 +169,32 @@ class _Profile extends State<Profile> {
                         ),
                       ],
                     ),
-                    height: 200,
-                    width: 200,
-                    margin: const EdgeInsets.only(left: 50.0, right: 30.0, top: 15),
+                    height: 225,
+                    width: 225,
+                    margin:
+                        const EdgeInsets.only(left: 50.0, right: 30.0, top: 15),
+                    child: Stack(
+                      children: [
+                        if (_imagePath
+                            .isNotEmpty) // Tampilkan gambar jika _imagePath tidak kosong
+                          Image.file(File(_imagePath),
+                              fit: BoxFit.cover, width: double.infinity),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            margin: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: IconButton(
+                              icon: Icon(Icons.camera_alt, color: Colors.white),
+                              onPressed: () => _pickAndSetImage(_setImageUrl),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: 30.0,
@@ -224,34 +251,6 @@ class _Profile extends State<Profile> {
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                    onPressed: () => _pickAndSetImage(_setImageUrl),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.image_rounded,
-                            color: Colors.white), // Icon added here
-                        SizedBox(
-                            width:
-                                10), // Add some spacing between the icon and text
-                        Text(
-                          'Pilih Foto',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  _imagePath != '' ? Image.file(File(_imagePath)) : Container(),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
                       primary: Colors.white,
                       minimumSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
@@ -259,11 +258,14 @@ class _Profile extends State<Profile> {
                           color: Colors.blueAccent,
                           width: 2.0,
                         ),
-                        borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
+                        borderRadius:
+                            BorderRadius.circular(4), // Atur sesuai kebutuhan
                       ),
                     ),
-                    child: Text('Update Data Profile',
-                    style: TextStyle(color: Colors.blueAccent),),
+                    child: Text(
+                      'Update Data Profile',
+                      style: TextStyle(color: Colors.blueAccent),
+                    ),
                     onPressed: () async {
                       final String nomor_induk = _nomorindukController.text;
                       final String angkatan = _angkatanController.text;
@@ -280,16 +282,19 @@ class _Profile extends State<Profile> {
                           "image": imageUrl,
                         });
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Profil anda berhasil diubah'), backgroundColor: Colors.blueAccent,)
-                        );
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Profil anda berhasil diubah'),
+                          backgroundColor: Colors.blueAccent,
+                        ));
                         Navigator.pop(context);
                         // Tambahkan kode untuk memperbarui state atau navigasi ke halaman lain jika perlu
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Document snapshot is null'), backgroundColor: Colors.red,)
-                        );
-                      };
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Document snapshot is null'),
+                          backgroundColor: Colors.red,
+                        ));
+                      }
+                      ;
                     },
                   ),
                   const SizedBox(
