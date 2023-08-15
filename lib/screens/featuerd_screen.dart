@@ -41,7 +41,7 @@ class Body extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "\nExplore Categories\n",
+                "\nMenu\n",
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],

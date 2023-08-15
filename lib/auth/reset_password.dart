@@ -23,13 +23,20 @@ class _ResetPasswordState extends State<ResetPassword> {
   Future passwordReset() async {
     try{
       await FirebaseAuth.instance.sendPasswordResetEmail(email: _emailTextController.text.trim());
+      showDialog(
+        context: context, 
+        builder: (context){
+          return AlertDialog(
+            content: Text('Link reset password telah dikirim. Cek email anda!'),
+          );
+        });
     } on FirebaseAuthException catch (e) {
       print(e);
       showDialog(
         context: context, 
         builder: (context){
           return AlertDialog(
-            content: Text('Link reset password telah dikirim. Cek email anda!'),
+            content: Text(e.message.toString()),
           );
         });
     }
