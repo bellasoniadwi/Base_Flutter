@@ -83,6 +83,8 @@ class CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => category.onTapHandler(context),
       child: Container(
+        width: 150, // Tentukan width sesuai kebutuhan
+        height: 300, // Tentukan height sesuai kebutuhan
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -106,7 +108,7 @@ class CategoryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 35,
+              height: 15,
             ),
             Text(category.name),
           ],

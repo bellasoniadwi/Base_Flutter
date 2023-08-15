@@ -30,32 +30,22 @@ class _Profile extends State<Profile> {
 
   String imageUrl = '';
   String _imagePath = '';
+  XFile? _pickedImage;
 
   void initState() {
     super.initState();
     fetchUserDataFromFirestore();
   }
 
-  // Fungsi Pick Image dan Penyimpanan ke Firebase
-  Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
+  // Fungsi Pick Image tanpa menyimpan ke Firebase
+  Future<void> _pickImage() async {
     ImagePicker imagePicker = ImagePicker();
-    XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (file == null) return;
-    setState(() {
-      _imagePath = file.path;
-    });
-    Uint8List imageBytes = await file.readAsBytes();
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-    String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-    String fileName =
-        'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
-    Reference referenceImageToUpload =
-        FirebaseStorage.instance.ref().child(fileName);
-    await referenceImageToUpload.putData(imageBytes);
-
-    String imageUrl = await referenceImageToUpload.getDownloadURL();
-    setImageUrl(imageUrl);
+    _pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (_pickedImage != null) {
+      setState(() {
+        _imagePath = _pickedImage!.path;
+      });
+    }
   }
 
   // Fungsi Pembantu Image untuk mengatur imageUrl dengan menggunakan setState.
@@ -175,10 +165,15 @@ class _Profile extends State<Profile> {
                         const EdgeInsets.only(left: 50.0, right: 30.0, top: 15),
                     child: Stack(
                       children: [
-                        if (_imagePath
-                            .isNotEmpty) // Tampilkan gambar jika _imagePath tidak kosong
-                          Image.file(File(_imagePath),
-                              fit: BoxFit.cover, width: double.infinity),
+                        if (_imagePath.isNotEmpty)
+                          ClipOval(
+                            child: Image.file(
+                              File(_imagePath),
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
+                          ),
                         Align(
                           alignment: Alignment.bottomRight,
                           child: Container(
@@ -189,7 +184,7 @@ class _Profile extends State<Profile> {
                             ),
                             child: IconButton(
                               icon: Icon(Icons.camera_alt, color: Colors.white),
-                              onPressed: () => _pickAndSetImage(_setImageUrl),
+                              onPressed: () => _pickImage(),
                             ),
                           ),
                         ),
@@ -273,6 +268,20 @@ class _Profile extends State<Profile> {
                       if (imageUrl.isEmpty) {
                         imageUrl = accountImage;
                         return;
+                      } else {
+                        Uint8List imageBytes = await _pickedImage!.readAsBytes();
+                        String uniqueFileName =
+                            DateTime.now().millisecondsSinceEpoch.toString();
+                        String formattedDateTime =
+                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+                        String fileName =
+                            'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+                        Reference referenceImageToUpload =
+                            FirebaseStorage.instance.ref().child(fileName);
+                        await referenceImageToUpload.putData(imageBytes);
+
+                        imageUrl = await referenceImageToUpload.getDownloadURL();
                       }
 
                       if (widget.documentSnapshot != null) {

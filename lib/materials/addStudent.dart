@@ -31,25 +31,16 @@ class _AddStudent extends State<AddStudent> {
   String? _selectedValue;
   List<String> listOfValue = ['Masuk', 'Izin', 'Sakit'];
 
-  // Fungsi Pick Image dan Penyimpanan ke Firebase
-  Future<void> _pickAndSetImage(Function(String) setImageUrl) async {
+  // Fungsi Pick Image tanpa menyimpan ke Firebase
+  Future<void> _pickAndSetImage() async {
     ImagePicker imagePicker = ImagePicker();
     XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
     if (file == null) return;
     setState(() {
       _imagePath = file.path;
     });
-    Uint8List imageBytes = await file.readAsBytes();
-    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
-    String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
-    String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
-    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
-    await referenceImageToUpload.putData(imageBytes);
-
-    String imageUrl = await referenceImageToUpload.getDownloadURL();
-    setImageUrl(imageUrl);
   }
+
 
   // Fungsi Pembantu Image untuk mengatur imageUrl dengan menggunakan setState.
   void _setImageUrl(String imageUrl) {
@@ -202,7 +193,7 @@ class _AddStudent extends State<AddStudent> {
                     borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
                   ),
                 ),
-                onPressed: () => _pickAndSetImage(_setImageUrl),
+                onPressed: () => _pickAndSetImage(),
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -221,7 +212,22 @@ class _AddStudent extends State<AddStudent> {
               const SizedBox(
                 height: 20.0,
               ),
-              _imagePath != '' ? Image.file(File(_imagePath)) : Container(),
+              Center(
+                child: Container(
+                  height: 350, // Atur sesuai kebutuhan
+                  width: 200, // Atur sesuai kebutuhan
+                  // decoration: BoxDecoration(
+                  //   border: Border.all(color: Colors.black, width: 2.0),
+                  //   borderRadius: BorderRadius.circular(4.0),
+                  // ),
+                  child: _imagePath != ''
+                      ? Image.file(
+                          File(_imagePath),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+              ),
               const SizedBox(
                 height: 10.0,
               ),
@@ -250,12 +256,23 @@ class _AddStudent extends State<AddStudent> {
                   final String longitude =
                       _currentLocation!.longitude.toString();
 
-                  if (imageUrl.isEmpty) {
+                  if (_imagePath.isEmpty) { // Ganti imageUrl.isEmpty menjadi _imagePath.isEmpty
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Please Upload an Image')));
                     return;
                   }
-                  if (name != "") {
+
+                  if (keterangan == "Masuk" || keterangan=="Izin" || keterangan=="Sakit") {
+                    Uint8List imageBytes = await File(_imagePath).readAsBytes();
+                    String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+                    String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+                    String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+                    Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
+                    await referenceImageToUpload.putData(imageBytes);
+
+                    String imageUrl = await referenceImageToUpload.getDownloadURL();
+
                     await _students.add({
                       "name": name,
                       "timestamps": FieldValue.serverTimestamp(),
@@ -268,14 +285,20 @@ class _AddStudent extends State<AddStudent> {
                     _nameController.text = '';
                     _pelatihController.text = '';
                     dropdownvalue = '';
-                    imageUrl = '';
-                  }
+                    _imagePath  = '';
 
-                  ScaffoldMessenger.of(context).showSnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Data berhasil ditambahkan')));
                   Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Masukkan keterangan kehadiran')));
+                  }
                 },
-              )
+              ),
+              const SizedBox(
+                height: 80.0,
+              ),
             ],
           ),
         ),
