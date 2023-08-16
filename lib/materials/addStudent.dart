@@ -212,22 +212,23 @@ class _AddStudent extends State<AddStudent> {
               const SizedBox(
                 height: 20.0,
               ),
-              Center(
-                child: Container(
-                  height: 350, // Atur sesuai kebutuhan
-                  width: 200, // Atur sesuai kebutuhan
-                  // decoration: BoxDecoration(
-                  //   border: Border.all(color: Colors.black, width: 2.0),
-                  //   borderRadius: BorderRadius.circular(4.0),
-                  // ),
-                  child: _imagePath != ''
-                      ? Image.file(
-                          File(_imagePath),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
+              if (_imagePath.isNotEmpty)
+                Center(
+                  child: Container(
+                    height: 350, // Atur sesuai kebutuhan
+                    width: 200, // Atur sesuai kebutuhan
+                    // decoration: BoxDecoration(
+                    //   border: Border.all(color: Colors.black, width: 2.0),
+                    //   borderRadius: BorderRadius.circular(4.0),
+                    // ),
+                    child: _imagePath != ''
+                        ? Image.file(
+                            File(_imagePath),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
                 ),
-              ),
               const SizedBox(
                 height: 10.0,
               ),
@@ -280,7 +281,7 @@ class _AddStudent extends State<AddStudent> {
                       "latitude": latitude,
                       "longitude": longitude,
                       "keterangan": keterangan,
-                      "pelatih": pelatih,
+                      "instruktur": pelatih,
                     });
                     _nameController.text = '';
                     _pelatihController.text = '';

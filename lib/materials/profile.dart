@@ -210,8 +210,8 @@ class _Profile extends State<Profile> {
                     controller: _pelatihController,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      hintText: 'Masukkan Pelatih',
-                      labelText: 'PELATIH',
+                      hintText: 'Masukkan Instruktur',
+                      labelText: 'INSTRUKTUR',
                     ),
                     enabled: false,
                   ),
