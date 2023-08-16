@@ -93,14 +93,34 @@ List<Category> categoryList = [
 ];
 
 Future<void> scanQR(BuildContext context) async {
-    try {
-      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666',
-        'Cancel',
-        true,
-        ScanMode.QR,
-      );
+  try {
+    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666',
+      'Cancel',
+      true,
+      ScanMode.QR,
+    );
 
+    if (barcodeScanRes.contains('//')) {
+      // Barcode tidak sesuai, tampilkan pesan kesalahan
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Barcode tidak sesuai', textAlign: TextAlign.center,),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
       // Redirect to the detail page with the scanned document ID
       Navigator.pushReplacement(
         context,
@@ -110,7 +130,9 @@ Future<void> scanQR(BuildContext context) async {
           ),
         ),
       );
-    } on PlatformException {
-        
     }
+  } on PlatformException {
+    // Handle platform exception
   }
+}
+

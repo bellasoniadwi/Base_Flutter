@@ -42,10 +42,16 @@ class _DetailScanState extends State<DetailScan> {
             );
           }
 
+          if (!snapshot.hasData) {
+          return Center(
+            child: Text('Barcode tidak sesuai'),
+          );
+        }
+
           DocumentSnapshot documentSnapshot = snapshot.data!;
           if (!documentSnapshot.exists) {
             return Center(
-              child: Text('Data Not Found\nHasil Scan: ${widget.scannedId}'),
+              child: Text('Data dengan ID ${widget.scannedId} tidak ditemukan!', textAlign: TextAlign.center,),
             );
           }
 
