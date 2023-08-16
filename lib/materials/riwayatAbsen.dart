@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:project_sinarindo/constants/color.dart';
 import 'package:project_sinarindo/materials/detailStudent.dart';
+import 'package:project_sinarindo/screens/base_screen.dart';
 import 'package:project_sinarindo/screens/details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -77,15 +78,15 @@ class _RiwayatAbsenState extends State<RiwayatAbsen> {
                                       Theme.of(context).textTheme.displayMedium,
                                 ),
                               ),
-                              Positioned(
-                                left: 0,
-                                child: CustomIconButton(
-                                  child: const Icon(Icons.arrow_back),
-                                  height: 35,
-                                  width: 35,
-                                  onTap: () => Navigator.pop(context),
-                                ),
-                              ),
+                              // Positioned(
+                              //   left: 0,
+                              //   child: CustomIconButton(
+                              //     child: const Icon(Icons.arrow_back),
+                              //     height: 35,
+                              //     width: 35,
+                              //     onTap: () => Navigator.pop(context),
+                              //   ),
+                              // ),
                             ],
                           ),
                         ),
@@ -178,6 +179,18 @@ class _RiwayatAbsenState extends State<RiwayatAbsen> {
                 child: CircularProgressIndicator(),
               );
             }),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => BaseScreen()))
+                    .then((data) {});
+              },
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.blueAccent,
+            ),
       ),
     );
   }
