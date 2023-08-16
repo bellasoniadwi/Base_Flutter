@@ -281,22 +281,22 @@ class _DetailScanState extends State<DetailScan> {
                   ],
                 ),
               ),
+              FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BaseScreen()),
+                  ).then((data) {});
+                },
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                backgroundColor: Colors.blueAccent,
+              ),
             ],
           );
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => BaseScreen()),
-          ).then((data) {});
-        },
-        child: const Icon(
-          Icons.arrow_back,
-          color: Colors.white,
-        ),
-        backgroundColor: Colors.blueAccent,
       ),
     );
   }
