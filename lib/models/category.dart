@@ -108,7 +108,7 @@ Future<void> scanQR(BuildContext context) async {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text('Barcode tidak sesuai', textAlign: TextAlign.center,),
+            content: Text('QR Code tidak valid', textAlign: TextAlign.center,),
             actions: [
               TextButton(
                 onPressed: () {

@@ -43,17 +43,52 @@ class _DetailScanState extends State<DetailScan> {
           }
 
           if (!snapshot.hasData) {
-          return Center(
-            child: Text('Barcode tidak sesuai'),
-          );
-        }
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Error'),
+                  content: Text('Barcode tidak sesuai', textAlign: TextAlign.center),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+            return BaseScreen();
+          }
 
           DocumentSnapshot documentSnapshot = snapshot.data!;
           if (!documentSnapshot.exists) {
-            return Center(
-              child: Text('Data dengan ID ${widget.scannedId} tidak ditemukan!', textAlign: TextAlign.center,),
+          Future.delayed(Duration.zero, () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Error'),
+                  content: Text(
+                    'Data dengan ID ${widget.scannedId} tidak ditemukan!',
+                    textAlign: TextAlign.center,
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
             );
-          }
+          });
+          return BaseScreen();
+        }
 
           // Get the data from the documentSnapshot
           String name = documentSnapshot['name'] ?? '';
