@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:project_sinarindo/constants/color.dart';
 import 'package:project_sinarindo/materials/detailStudent.dart';
 import 'package:project_sinarindo/screens/base_screen.dart';
-import 'package:project_sinarindo/screens/details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -55,9 +53,8 @@ class _RiwayatAbsenState extends State<RiwayatAbsen> {
       child: Scaffold(
         body: StreamBuilder(
             stream: _students
-                .where('name',
-                    isEqualTo: _userName) // Filter documents by 'name'
-                .snapshots(),
+              .where('name', isEqualTo: _userName)
+              .snapshots(),
             builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
               if (streamSnapshot.hasData) {
                 return SafeArea(
@@ -78,15 +75,7 @@ class _RiwayatAbsenState extends State<RiwayatAbsen> {
                                       Theme.of(context).textTheme.displayMedium,
                                 ),
                               ),
-                              // Positioned(
-                              //   left: 0,
-                              //   child: CustomIconButton(
-                              //     child: const Icon(Icons.arrow_back),
-                              //     height: 35,
-                              //     width: 35,
-                              //     onTap: () => Navigator.pop(context),
-                              //   ),
-                              // ),
+                              
                             ],
                           ),
                         ),
@@ -97,73 +86,77 @@ class _RiwayatAbsenState extends State<RiwayatAbsen> {
                           child: ListView.builder(
                             itemCount: streamSnapshot.data!.docs.length,
                             itemBuilder: (context, index) {
-                              // final Riwayat riwayat = riwayats[index];
+                              // menampilkan descending
+                              final reversedIndex = streamSnapshot.data!.docs.length - 1 - index;
                               final DocumentSnapshot documentSnapshot =
-                                  streamSnapshot.data!.docs[index];
-                              return GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        DetailStudent(documentSnapshot: documentSnapshot),
+                                  streamSnapshot.data!.docs[reversedIndex];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          DetailStudent(documentSnapshot: documentSnapshot),
+                                    ),
                                   ),
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                  ),
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(documentSnapshot['name']),
-                                            Text(
-                                              _getFormattedTimestamp(
-                                                  documentSnapshot[
-                                                      'timestamps']),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                            Text(
-                                                  documentSnapshot[
-                                                      'keterangan'],
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                          ],
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                    ),
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.network(
-                                        documentSnapshot['image'],
-                                        width:
-                                            60, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
-                                        height:
-                                            80, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
-                                        fit: BoxFit.cover,
-                                      ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(documentSnapshot['name']),
+                                              Text(
+                                                _getFormattedTimestamp(
+                                                    documentSnapshot[
+                                                        'timestamps']),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall,
+                                              ),
+                                              Text(
+                                                    documentSnapshot[
+                                                        'keterangan'],
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodySmall,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: Image.network(
+                                          documentSnapshot['image'],
+                                          width:
+                                              60, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
+                                          height:
+                                              80, // Sesuaikan ukuran gambar sesuai kebutuhan Anda
+                                          fit: BoxFit.cover,
+                                        ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
