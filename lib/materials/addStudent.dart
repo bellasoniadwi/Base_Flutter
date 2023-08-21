@@ -27,6 +27,7 @@ class _AddStudent extends State<AddStudent> {
   DateTime selectedDate = DateTime.now();
   String imageUrl = '';
   String _imagePath = '';
+  bool _isSaving = false;
 
   String? _selectedValue;
   List<String> listOfValue = ['Masuk', 'Izin', 'Sakit'];
@@ -215,12 +216,8 @@ class _AddStudent extends State<AddStudent> {
               if (_imagePath.isNotEmpty)
                 Center(
                   child: Container(
-                    height: 350, // Atur sesuai kebutuhan
-                    width: 200, // Atur sesuai kebutuhan
-                    // decoration: BoxDecoration(
-                    //   border: Border.all(color: Colors.black, width: 2.0),
-                    //   borderRadius: BorderRadius.circular(4.0),
-                    // ),
+                    height: 350,
+                    width: 200,
                     child: _imagePath != ''
                         ? Image.file(
                             File(_imagePath),
@@ -244,9 +241,22 @@ class _AddStudent extends State<AddStudent> {
                     borderRadius: BorderRadius.circular(4), // Atur sesuai kebutuhan
                   ),
                 ),
-                child: Text('Simpan Data',
-                style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),),
-                onPressed: () async {
+                child: _isSaving
+                ? CircularProgressIndicator( // Tampilkan indikator loading
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                  )
+                : Text(
+                    'Simpan Data',
+                    style: TextStyle(
+                        color: Colors.blueAccent, fontWeight: FontWeight.bold),
+                  ),
+                onPressed: _isSaving // Prevent button press when loading
+                      ? null // Button is disabled when loading
+                      : () async {
+                  setState(() {
+                    _isSaving = true; // Aktifkan indikator loading
+                  });
+
                   final String name = _nameController.text;
                   final String keterangan = _selectedValue.toString();
                   final String pelatih = _pelatihController.text;
@@ -258,8 +268,12 @@ class _AddStudent extends State<AddStudent> {
                       _currentLocation!.longitude.toString();
 
                   if (_imagePath.isEmpty) { // Ganti imageUrl.isEmpty menjadi _imagePath.isEmpty
+                      setState(() {
+                        _isSaving = false; // Matikan indikator loading setelah selesai
+                      });
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Please Upload an Image')));
+                        SnackBar(content: Text('Upload Foto Absen Anda'),
+                        backgroundColor: Colors.blueAccent,));
                     return;
                   }
 
@@ -274,7 +288,12 @@ class _AddStudent extends State<AddStudent> {
 
                     String imageUrl = await referenceImageToUpload.getDownloadURL();
 
-                    await _students.add({
+                    // Generate custom id : increment
+                    String docId = DateTime.now().millisecondsSinceEpoch.toString();
+                    // Create a reference to the document using the custom ID
+                    DocumentReference documentReference = _students.doc(docId);
+
+                    await documentReference.set({
                       "name": name,
                       "timestamps": FieldValue.serverTimestamp(),
                       "image": imageUrl,
@@ -283,17 +302,28 @@ class _AddStudent extends State<AddStudent> {
                       "keterangan": keterangan,
                       "instruktur": pelatih,
                     });
+
+                    setState(() {
+                      _isSaving = false; // Matikan indikator loading setelah selesai
+                    });
+
                     _nameController.text = '';
                     _pelatihController.text = '';
                     dropdownvalue = '';
                     _imagePath  = '';
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Data berhasil ditambahkan')));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Data Absensi anda berhasil tersimpan'),
+                          backgroundColor: Colors.blueAccent,
+                        ));
                   Navigator.pop(context);
                   } else {
+                    setState(() {
+                      _isSaving = false; // Matikan indikator loading setelah selesai
+                    });
                     ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Masukkan keterangan kehadiran')));
+                    SnackBar(content: Text('Masukkan keterangan kehadiran'),
+                    backgroundColor: Colors.blueAccent,));
                   }
                 },
               ),
