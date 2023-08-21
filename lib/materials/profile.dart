@@ -31,6 +31,8 @@ class _Profile extends State<Profile> {
   String imageUrl = '';
   String _imagePath = '';
   XFile? _pickedImage;
+  bool _isImageChanged = false;
+  bool _isLoading = false;
 
   void initState() {
     super.initState();
@@ -38,15 +40,17 @@ class _Profile extends State<Profile> {
   }
 
   // Fungsi Pick Image tanpa menyimpan ke Firebase
-  Future<void> _pickImage() async {
+  void _pickImage() async {
     ImagePicker imagePicker = ImagePicker();
     _pickedImage = await imagePicker.pickImage(source: ImageSource.gallery);
     if (_pickedImage != null) {
       setState(() {
         _imagePath = _pickedImage!.path;
+        _isImageChanged = true; // Set _isImageChanged to true
       });
     }
   }
+
 
   // Fungsi Pembantu Image untuk mengatur imageUrl dengan menggunakan setState.
   void _setImageUrl(String imageUrl) {
@@ -257,39 +261,48 @@ class _Profile extends State<Profile> {
                             BorderRadius.circular(4), // Atur sesuai kebutuhan
                       ),
                     ),
-                    child: Text(
-                      'Update Data Profile',
-                      style: TextStyle(color: Colors.blueAccent),
-                    ),
-                    onPressed: () async {
+                    child: _isLoading // Show loading indicator or button text
+                    ? CircularProgressIndicator() // Show loading indicator
+                    : Text(
+                        'Update Data Profile',
+                        style: TextStyle(color: Colors.blueAccent),
+                      ),
+                    onPressed: _isLoading // Prevent button press when loading
+                      ? null // Button is disabled when loading
+                      : () async {
                       final String nomor_induk = _nomorindukController.text;
                       final String angkatan = _angkatanController.text;
 
-                      if (imageUrl.isEmpty) {
-                        imageUrl = accountImage;
-                        return;
-                      } else {
-                        Uint8List imageBytes = await _pickedImage!.readAsBytes();
-                        String uniqueFileName =
-                            DateTime.now().millisecondsSinceEpoch.toString();
-                        String formattedDateTime =
-                            DateFormat('yyyy-MM-dd').format(DateTime.now());
+                      String newImageUrl = imageUrl;
 
-                        String fileName =
-                            'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
-                        Reference referenceImageToUpload =
-                            FirebaseStorage.instance.ref().child(fileName);
+                      if (_isImageChanged) {
+                        Uint8List imageBytes = await _pickedImage!.readAsBytes();
+                        String uniqueFileName = DateTime.now().millisecondsSinceEpoch.toString();
+                        String formattedDateTime = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+                        String fileName = 'images/' + uniqueFileName + '_' + formattedDateTime + '.jpg';
+                        Reference referenceImageToUpload = FirebaseStorage.instance.ref().child(fileName);
                         await referenceImageToUpload.putData(imageBytes);
 
-                        imageUrl = await referenceImageToUpload.getDownloadURL();
+                        newImageUrl = await referenceImageToUpload.getDownloadURL();
                       }
 
+                      setState(() {
+                        _isLoading = true; // Start loading
+                      });
+
+                      try {
                       if (widget.documentSnapshot != null) {
-                        await _users.doc(widget.documentSnapshot!.id).update({
+                        Map<String, dynamic> updatedData = {
                           "nomor_induk": nomor_induk,
                           "angkatan": angkatan,
-                          "image": imageUrl,
-                        });
+                        };
+
+                        if (_isImageChanged) {
+                          updatedData["image"] = newImageUrl;
+                        }
+
+                        await _users.doc(widget.documentSnapshot!.id).update(updatedData);
 
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text('Profil anda berhasil diubah'),
@@ -302,8 +315,14 @@ class _Profile extends State<Profile> {
                           content: Text('Document snapshot is null'),
                           backgroundColor: Colors.red,
                         ));
+                      };
+                      } catch (error) {
+                        print("Error updating profile: $error");
+                      } finally {
+                        setState(() {
+                          _isLoading = false; // End loading
+                        });
                       }
-                      ;
                     },
                   ),
                   const SizedBox(
